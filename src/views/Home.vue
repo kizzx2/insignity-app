@@ -25,7 +25,7 @@
       </ul>
 
       <div class="settings-container">
-        <v-icon name="settings" style="width: 24px"></v-icon>
+        <v-icon name="settings" style="width: 24px; cursor: pointer"></v-icon>
       </div>
     </div>
 
@@ -292,7 +292,7 @@
   flex: 0 0 auto;
 }
 
-.progress-bar {
+.progress .progress-bar {
   border-radius:  16px !important;
 }
 
@@ -350,11 +350,17 @@
   flex-direction: column;
 }
 
+h4 {
+  text-transform: uppercase;
+  font-size: 20px;
+}
+
 .sidebar h4 {
   text-align: left;
   margin-top: 2em;
   margin-bottom: 1em;
-  margin-left: 2em;
+  margin-left: 1.3em;
+  text-transform: uppercase;
 }
 
 .sidebar ul {
@@ -367,6 +373,12 @@
 .sidebar ul li {
   padding-left: 2em;
   height: 2em;
+}
+
+.sidebar ul li:hover {
+  font-weight: bold;
+  cursor: pointer;
+  color: #7300e3;
 }
 
 .sidebar ul li.active {
@@ -473,6 +485,10 @@
   align-items: end;
   flex-directions: row;
   display: flex;
+}
+
+.settings-container svg:hover {
+  background: lightgray;
 }
 
 .slide-fade-enter-active {
