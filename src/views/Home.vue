@@ -292,20 +292,9 @@
   flex: 0 0 auto;
 }
 
-.progress .progress-bar {
-  border-radius:  16px !important;
-}
-
-.red.progress .progress-bar {
-  background-color: red !important;
-}
-
-.blue.progress .progress-bar {
-  background-color: blue !important;
-}
-
-.yellow.progress .progress-bar {
-  background-color: yellow !important;
+.progress {
+  border-radius: 16px;
+  height: 10px;
 }
 
 .theme-main {
