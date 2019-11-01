@@ -67,8 +67,19 @@
 
     <div class="editor-content-container" @contextmenu.prevent="$refs.menu.open">
       <div style="text-align: right">
-        <toggle-button :labels="{checked: 'AI', unchecked: 'OFF'}" :value="true" :height="44" :width="100" :font-size="24" color="#7300e3" />
+        <toggle-button
+          :labels="{checked: 'AI', unchecked: 'OFF'}"
+          :value="true"
+          :height="44"
+          :width="100"
+          :font-size="24"
+          color="#7300e3"
+          v-model="aiEnabled"
+        />
       </div>
+
+      <br />
+
       <editor-content class="editor__content" :editor="editor" @contextmenu.prevent="$refs.menu.open" />
     </div>
 
@@ -210,40 +221,53 @@
         <img class="avatar" src="/cecilia.jpg" />
       </div>
 
-      <h4>Performance</h4>
+      <transition name="slide-fade">
+        <div v-show="aiEnabled">
+          <h4>Performance</h4>
 
-      <div class="progress-container">
-        Reading Level
-        <b-progress :value="58" :max="100" class="red"></b-progress>
-      </div>
+          <div class="progress-container">
+            <div class="progress-container-label">
+              <span class="label">Reading Level</span>
+              <span class="value">58%</span>
+            </div>
+            <b-progress :value="58" :max="100" class="red"></b-progress>
+          </div>
 
-      <div class="progress-container">
-        Industry Standard
-        <b-progress :value="94" :max="100" class="blue"></b-progress>
-      </div class="progress-container">
+          <div class="progress-container">
+            <div class="progress-container-label">
+              <span class="label">Industry Standard</span>
+              <span class="value">94%</span>
+            </div>
+            <b-progress :value="94" :max="100" class="blue"></b-progress>
+          </div class="progress-container">
 
-      <div class="progress-container">
-        Proprietary Information
-        <b-progress :value="83" :max="100" class="yellow"></b-progress>
-      </div>
+          <div class="progress-container">
+            <div class="progress-container-label">
+              <span class="label">Proprietary Information</span>
+              <span class="value">83%</span>
+            </div>
+            <b-progress :value="83" :max="100" class="yellow"></b-progress>
+          </div>
 
-      <br />
-      <hr />
-      <br />
+          <br />
+          <hr />
+          <br />
 
-      <h4>Intelligence</h4>
+          <h4>Intelligence</h4>
 
-      <div class="card">
-        <span class="red">•</span>Lorem ipsum dolor sit amet
-      </div>
+          <div class="card" @click="addSomeText()">
+            <span class="red">•</span>Lorem ipsum dolor sit amet
+          </div>
 
-      <div class="card">
-        <span class="red">•</span>Lorem ipsum dolor sit amet
-      </div>
+          <div class="card" @click="addSomeText()">
+            <span class="red">•</span>Lorem ipsum dolor sit amet
+          </div>
 
-      <div class="card">
-        <span class="red">•</span>Lorem ipsum dolor sit amet
-      </div>
+          <div class="card" @click="addSomeText()">
+            <span class="red">•</span>Lorem ipsum dolor sit amet
+          </div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -254,6 +278,18 @@
   text-align: left;
   margin-top: 1em;
   margin-bottom: 1em;
+}
+
+.progress-container-label {
+  display: flex;
+}
+
+.progress-container-label .label {
+  flex: 1 0 auto;
+}
+
+.progress-container-label .value {
+  flex: 0 0 auto;
 }
 
 .progress-bar {
@@ -388,6 +424,7 @@
   margin-left: 0;
   padding: 2em;
   text-align: left;
+  cursor: pointer;
 }
 
 .red {
@@ -437,6 +474,17 @@
   flex-directions: row;
   display: flex;
 }
+
+.slide-fade-enter-active {
+  transition: all .1s ease;
+}
+.slide-fade-leave-active {
+  transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateX(-10px);
+  opacity: 0;
+}
 </style>
 
 <script>
@@ -472,6 +520,7 @@ export default {
 
   data() {
     return {
+      aiEnabled: true,
       editor: new Editor({
         extensions: [
           new Blockquote(),
@@ -492,11 +541,19 @@ export default {
           new Underline(),
           new History(),
         ],
+        autoFocus: true,
         content: `
-          <h1>Lorem ipsum dolor sit amet</h1>
+          <h1>start writing...</h1>
         `
       })
     };
+  },
+
+  methods: {
+    addSomeText() {
+      this.editor.setContent(this.editor.getHTML() + "<h3>FOOO</h3>");
+      this.editor.focus();
+    }
   },
 
   beforeDestroy() {
