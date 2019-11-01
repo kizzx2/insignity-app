@@ -1,7 +1,7 @@
 <template>
   <div id="home-app">
     <div class="sidebar">
-      <h1 class="theme-main">insignity</h1>
+      <h1 class="theme-main" style="text-align: center"><img src="/logo.png" style="width: 200px; margin-left: 1em; margin-top: 1em" /></h1>
 
       <h4>Team</h4>
 
@@ -23,10 +23,53 @@
         <li>Company Records</li>
         <li>Public Databases</li>
       </ul>
+
+      <div class="settings-container">
+        <v-icon name="settings" style="width: 24px"></v-icon>
+      </div>
     </div>
 
-    <div class="editor-content-container">
-      <editor-content class="editor__content" :editor="editor" />
+    <vue-context ref="menu">
+      <h4>Intelligence</h4>
+
+      <li>
+        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
+        <a href="#">
+          <span class="title">Chart</span><br />
+          <span class="subtitle">Embed a chart from data source</span><br />
+        </a>
+      </li>
+
+      <li>
+        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
+        <a href="#">
+          <span class="title">Table</span><br />
+          <span class="subtitle">Add a dynamic table</span><br />
+        </a>
+      </li>
+
+      <li>
+        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
+        <a href="#">
+          <span class="title">Validate</span><br />
+          <span class="subtitle">Validate your information</span><br />
+        </a>
+      </li>
+
+      <li>
+        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
+        <a href="#">
+          <span class="title">Summarize</span><br />
+          <span class="subtitle">Summarize the selected content</span><br />
+        </a>
+      </li>
+    </vue-context>
+
+    <div class="editor-content-container" @contextmenu.prevent="$refs.menu.open">
+      <div style="text-align: right">
+        <toggle-button :labels="{checked: 'AI', unchecked: 'OFF'}" :value="true" :height="44" :width="100" :font-size="24" color="#7300e3" />
+      </div>
+      <editor-content class="editor__content" :editor="editor" @contextmenu.prevent="$refs.menu.open" />
     </div>
 
     <div class="editor-toolbar-container">
@@ -171,17 +214,17 @@
 
       <div class="progress-container">
         Reading Level
-        <b-progress :value="58" :max="100"></b-progress>
+        <b-progress :value="58" :max="100" class="red"></b-progress>
       </div>
 
       <div class="progress-container">
         Industry Standard
-        <b-progress :value="94" :max="100"></b-progress>
+        <b-progress :value="94" :max="100" class="blue"></b-progress>
       </div class="progress-container">
 
       <div class="progress-container">
         Proprietary Information
-        <b-progress :value="83" :max="100"></b-progress>
+        <b-progress :value="83" :max="100" class="yellow"></b-progress>
       </div>
 
       <br />
@@ -217,8 +260,20 @@
   border-radius:  16px !important;
 }
 
+.red.progress .progress-bar {
+  background-color: red !important;
+}
+
+.blue.progress .progress-bar {
+  background-color: blue !important;
+}
+
+.yellow.progress .progress-bar {
+  background-color: yellow !important;
+}
+
 .theme-main {
-  color: #5655bd;
+  color: #7300e3;
 }
 
 .menubar__button {
@@ -228,7 +283,7 @@
   height: 48px;
   border: 0;
   border-radius: 12px;
-  background: #f6f4f9;
+  background: none;
 }
 
 .menubar__button:hover {
@@ -255,6 +310,8 @@
   background: #f6f4f9;
   padding: 2em;
   padding-left: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar h4 {
@@ -277,9 +334,10 @@
 }
 
 .sidebar ul li.active {
-  color: #5655bd;
-  padding-left: 1.45em;
-  border-left: 8px solid #5655bd;
+  color: #7300e3;
+  font-weight: bold;
+  padding-left: 1.55em;
+  border-left: 6px solid #7300e3;
 }
 
 .suggestions {
@@ -298,6 +356,7 @@
 
 .editor-toolbar-container {
   grid-area: editor-toolbar-container;
+  margin-top: -2em;
 }
 
 .avatar-container {
@@ -335,6 +394,49 @@
   color: red;
   margin-right: 0.5em;
 }
+
+.v-context {
+  text-align: left;
+  padding: 1em;
+}
+
+.v-context h4 {
+  margin-bottom: 1em;
+}
+
+.v-context li {
+  height: 48px;
+  padding: 1em;
+  padding-bottom: 4em;
+}
+
+.v-context li:hover {
+  background: #f6f4f9;
+  cursor: pointer;
+}
+
+.v-context li img {
+  float: left;
+  margin-top: 12px;
+}
+
+.v-context a {
+  float: left;
+  padding-top: 0;
+}
+
+.v-context a:hover {
+  background: none;
+}
+
+.settings-container {
+  text-align: left;
+  padding-left: 2em;
+  flex: 1 0 auto;
+  align-items: end;
+  flex-directions: row;
+  display: flex;
+}
 </style>
 
 <script>
@@ -358,12 +460,14 @@ import {
   Underline,
   History,
 } from 'tiptap-extensions'
+import { ToggleButton } from 'vue-js-toggle-button';
+import { VueContext } from 'vue-context';
 
 export default {
   name: 'home',
 
   components: {
-    EditorContent, EditorMenuBar
+    EditorContent, EditorMenuBar, ToggleButton, VueContext
   },
 
   data() {

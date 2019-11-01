@@ -6,11 +6,13 @@ import BootstrapVue from 'bootstrap-vue';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'vue-context/dist/css/vue-context.css';
 
 Vue.use(BootstrapVue);
 
 Vue.use(VueRouter);
 Vue.use(Feather, 'v-icon');
+
 
 const routes = [
   {
