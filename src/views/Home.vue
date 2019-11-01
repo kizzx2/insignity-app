@@ -2,6 +2,27 @@
   <div id="home-app">
     <div class="sidebar">
       <h1 class="theme-main">insignity</h1>
+
+      <h4>Team</h4>
+
+      <ul>
+        <li class="active">Finance</li>
+        <li>Accounting</li>
+        <li>Insurance</li>
+        <li>Loan</li>
+      </ul>
+
+      <h4>Folders</h4>
+
+      <ul>
+        <li>Annual Reports</li>
+        <li class="active">Financial Statements</li>
+        <li>News Articles</li>
+        <li>Bank Statements</li>
+        <li>Land Registry</li>
+        <li>Company Records</li>
+        <li>Public Databases</li>
+      </ul>
     </div>
 
     <div class="editor-content-container">
@@ -141,6 +162,34 @@
     </div>
 
     <div class="suggestions">
+      <div class="avatar-container">
+        <h5>Joslin Rodgers</h5>
+        <img class="avatar" src="/cecilia.jpg" />
+      </div>
+
+      <h4>Performance</h4>
+
+      <div class="progress-container">
+        Reading Level
+        <b-progress :value="58" :max="100"></b-progress>
+      </div>
+
+      <div class="progress-container">
+        Industry Standard
+        <b-progress :value="94" :max="100"></b-progress>
+      </div class="progress-container">
+
+      <div class="progress-container">
+        Proprietary Information
+        <b-progress :value="83" :max="100"></b-progress>
+      </div>
+
+      <br />
+      <hr />
+      <br />
+
+      <h4>Intelligence</h4>
+
       <div class="card">
         <span class="red">•</span>Lorem ipsum dolor sit amet
       </div>
@@ -157,6 +206,17 @@
 </template>
 
 <style scoped>
+.progress-container {
+  padding-right: 16px;
+  text-align: left;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.progress-bar {
+  border-radius:  16px !important;
+}
+
 .theme-main {
   color: #5655bd;
 }
@@ -183,7 +243,7 @@
 #home-app {
   height: 100%;
   display: grid;
-  grid-template-columns: 200px 1fr 400px;
+  grid-template-columns: 300px 1fr 400px;
   grid-template-rows: 1fr 50px;
   grid-template-areas:
     "sidebar editor-content-container suggestions"
@@ -193,28 +253,80 @@
 .sidebar {
   grid-area: sidebar;
   background: #f6f4f9;
+  padding: 2em;
+  padding-left: 0;
+}
+
+.sidebar h4 {
+  text-align: left;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  margin-left: 2em;
+}
+
+.sidebar ul {
+  text-align: left;
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.sidebar ul li {
+  padding-left: 2em;
+  height: 2em;
+}
+
+.sidebar ul li.active {
+  color: #5655bd;
+  padding-left: 1.45em;
+  border-left: 8px solid #5655bd;
 }
 
 .suggestions {
   grid-area: suggestions;
+  text-align: left;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding: 2em;
+  padding-right: 4em;
 }
 
 .editor-content-container {
   grid-area: editor-content-container;
+  padding: 2em;
 }
 
 .editor-toolbar-container {
   grid-area: editor-toolbar-container;
 }
 
+.avatar-container {
+  margin-bottom: 2em;
+  text-align: right;
+}
+
+.avatar-container h5 {
+  margin-right: 1em;
+  display: inline;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 48px;
+}
+
 .editor__content {
   min-height: 100%;
+  text-align: left;
 }
 
 .card {
+  display: inherit;
   box-shadow: 4px 4px 10px 1px rgba(0,0,0,0.1);
   border-radius: 8px;
   margin: 2em 1em;
+  margin-left: 0;
   padding: 2em;
   text-align: left;
 }
