@@ -1,4 +1,4 @@
-# txt2insights-app
+# insignity-app
 
 ## Project setup
 ```
