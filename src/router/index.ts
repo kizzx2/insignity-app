@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
+import Feather from 'vue-icon';
 
 Vue.use(VueRouter);
+Vue.use(Feather, 'v-icon');
 
 const routes = [
   {
