@@ -15,8 +15,7 @@
 
       <li>
         <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
-        <a href="#">
-          <span class="title">Table</span><br />
+        <a href="#"> <span class="title">Table</span><br />
           <span class="subtitle">Add a dynamic table</span><br />
         </a>
       </li>
@@ -232,7 +231,9 @@
 
           <transition-group name="slide-fade" tag="div">
             <template v-for="(items, category, catIdx) in suggestions">
-              <h5 class="suggestion-category" :key="catIdx">{{ category }}</h5>
+              <div class="suggestion-category-container" :key="catIdx">
+                <h5 class="suggestion-category">{{ category }}</h5>
+              </div>
 
               <template v-for="(item, idx) in items">
                 <div class="card" v-if="item.type === 'news'" :key="`${catIdx}-${idx}`" @click="insertSuggestion(item)">
@@ -321,7 +322,7 @@
 #home-app {
   height: 100%;
   display: grid;
-  grid-template-columns: 300px 1fr 400px;
+  grid-template-columns: 300px 1fr 600px;
   grid-template-rows: 1fr 50px;
   grid-template-areas:
     "sidebar editor-content-container suggestions"
@@ -362,11 +363,13 @@ h4 {
   font-size: 24pt;
 }
 
+.suggestion-category-container {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
 h5.suggestion-category {
-  display: inline;
-  border-radius: 8px;
-  background: lightskyblue;
-  padding: 0.1em 0.5em;
+  color: #7300e3;
 }
 
 .card {
@@ -465,7 +468,8 @@ h5.suggestion-category {
 </style>
 
 <script>
-import { Editor, EditorContent, EditorMenuBar } from 'tiptap';
+import { Editor, EditorContent, EditorMenuBar, Node } from 'tiptap';
+import { setBlockType, textblockTypeInputRule, toggleBlockType } from 'tiptap-commands'
 import {
   Blockquote,
   Bold,
@@ -500,6 +504,40 @@ import uuid from 'uuid/v4';
 import { Base64 } from 'js-base64';
 import AppSidebar from '@/components/AppSidebar';
 import AppUserBlock from '@/components/AppUserBlock';
+import axios from 'axios';
+
+class Highlight extends Node {
+  get name() {
+    return 'highlight'
+  }
+
+  get defaultOptions() {
+    return { ent: 'name' };
+  }
+
+  get schema() {
+    return {
+      attrs: {
+        ent: {
+          default: 'name',
+        },
+      },
+      content: 'inline*',
+      group: 'block',
+      defining: true,
+      parseDOM: [
+        { tag: 'entity-name', attrs: { ent: 'name' } },
+        { tag: 'entity-company', attrs: { ent: 'name' } },
+        { tag: 'entity-date', attrs: { ent: 'name' } },
+      ],
+      toDOM: node => {
+        return [`span`, { class: `entity-${node.attrs.ent}` }, 0];
+      }
+    };
+  }
+};
+
+const API_URL = 'http://245b4c4d.ngrok.io/text';
 
 export default {
   name: 'home',
@@ -527,6 +565,7 @@ export default {
           new CodeBlock(),
           new HardBreak(),
           new Heading({ levels: [1, 2, 3] }),
+          new Highlight(),
           new History(),
           new Table(),
           new TableHeader(),
@@ -544,8 +583,7 @@ export default {
           new Underline(),
         ],
         autoFocus: true,
-        content: `<p> </p>
-        `,
+        content: `<entity-name>Donald Trump</entity-name>`,
         onUpdate: _.debounce(this.onUpdateContent, 1000),
       }),
     };
@@ -592,17 +630,88 @@ export default {
       // this.$Progress.start();
 
       try {
-        await new Promise((r) => setTimeout(r, Math.random() * 3000));
+        const params = new URLSearchParams();
+        params.append('text', query);
+
+        // const rv = await axios.post(API_URL, params);
+
+        const rv = {
+          "entites": [
+              [
+                  "northern",
+                  "ireland",
+                  "health",
+                  "services"
+              ]
+          ],
+          "message": "success",
+          "status code": 200,
+          "suggestions": {
+              "GoogleNews": [
+                  {
+                      "type": "news",
+                      "value": "Northern Ireland's highly restrictive abortion ban lifted at midnight on Monday after legislation was brought in by MPs at Westminster. Same-sex marriage was also legalised under the change to the law. The historic law change marks the beginning of a new chap…"
+                  },
+                  {
+                      "type": "news",
+                      "value": "Britain's government set out its agenda in a Queen's Speech on Monday, reaffirming its commitment to leaving the European Union on Oct. 31 and boosting spending on police, education and health before a widely expected election."
+                  },
+                  {
+                      "type": "news",
+                      "value": "A Northern Ireland woman acquitted of buying abortion pills for her daughter following a landmark law change has expressed relief she can now “finally move on with her life”. A judge directed a jury at Belfast Crown Court to find the 39-year-old mother not gu…"
+                  },
+                  {
+                      "type": "news",
+                      "value": "Although the Good Friday Agreement brought an end to the violence in the North, the issues of national identity, civil and political rights, and religious differences that lay behind the Troubles are far from resolved. But without Brexit, it’s quite probable …"
+                  },
+                  {
+                      "type": "news",
+                      "value": "A Westminster committee warns services are \"lacking adequate financial support or strategic guidance\"."
+                  },
+                  {
+                      "type": "news",
+                      "value": "Until recently, it was possible to believe that there was a middle way, or to be in denial that a decisive moment would come. That’s no longer the case, Sam Knight writes."
+                  },
+                  {
+                      "type": "news",
+                      "value": "Campaigners who fought for decades to end Northern Ireland's same-sex marriage ban and restrictions on abortion gathered in Belfast on Monday to prepared for a momentous change to the laws on both at the stroke of midnight."
+                  },
+                  {
+                      "type": "news",
+                      "value": "Claims several groups of children arrived in Belfast in shipping containers are currently being investigated by police."
+                  },
+                  {
+                      "type": "news",
+                      "value": "More than 19,300 people across Northern Ireland are waiting for a first outpatient appointment."
+                  },
+                  {
+                      "type": "news",
+                      "value": "From midnight, women and girls can terminate a pregnancy without fear of prosecution."
+                  }
+              ],
+              "HKEX": null,
+              "LawSuits": null,
+              "StockData": null,
+              "Twitter": null
+          }
+        };
+
+        debugger;
+
+        if (rv['message'] !== 'success') {
+          throw rv['message'];
+        }
+
         // this.$Progress.finish();
         this.querying = false;
 
-        return {
-          entities: [],
+        const rv0 = {
+          entities: [
+            ['HSBC', 'company'],
+            ['Mark Zuckberg', 'company'],
+            ['HSBC', 'company'],
+          ],
           suggestions: {
-            'news about Mark Zuckerberg': [
-              { value: faker.lorem.sentences(3), type: 'news' },
-              { value: faker.lorem.sentences(3), type: 'news' },
-            ],
             'macroeconomics about China': [
               { value: 'https://www.mathworks.com/help/examples/matlab/win64/CreateWordCloudFromTableExample_01.png', type: 'image' },
               { value: [['One', 'Two', 'Three'], ['Three', 'Four', 'Five']], type: 'table' },
@@ -626,6 +735,11 @@ export default {
             ],
           },
         };
+
+        rv0.entities = rv.entities;
+        rv0.suggestions['GoogleNews'] = rv.suggestions['GoogleNews'];
+
+        return rv0;
       } catch (e) {
         // this.$Progress.fail();
         this.querying = false;

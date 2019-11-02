@@ -15,6 +15,19 @@
   color: #2c3e50;
 }
 
+.entity-name {
+  background: red;
+  color: white;
+}
+
+.entity-date {
+  background: green;
+}
+
+.entity-company {
+  background: blue;
+}
+
 .progress-bar {
   background-color: #7300e3 !important;
 }
