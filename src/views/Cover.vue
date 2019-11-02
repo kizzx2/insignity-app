@@ -2,6 +2,31 @@
   <div id="cover-app">
     <app-sidebar />
 
+    <modal name="welcome-back" :width="650">
+      <div class="welcome-back-modal">
+        <h1>Welcome back!</h1>
+        <div class="tagline">What's your goal today?</div>
+
+        <div class="welcome-back-buttons">
+          <div class="welcome-back-button">
+            <img src="/icons/welcome-1.png" />
+          </div>
+          <div class="welcome-back-button">
+            <img src="/icons/welcome-2.png" />
+          </div>
+          <div class="welcome-back-button">
+            <img src="/icons/welcome-3.png" />
+          </div>
+          <div class="welcome-back-button">
+            <img src="/icons/welcome-4.png" />
+          </div>
+          <div class="welcome-back-button">
+            <img src="/icons/welcome-5.png" />
+          </div>
+        </div>
+      </div>
+    </modal>
+
     <div class="main-content">
       <app-user-block />
 
@@ -54,7 +79,7 @@
           <div class="new-document-button" @click="goToNew()">
             <img src="/icons/new-document.png" /><br />
             <br />
-            <router-link to="/new">New Document</router-link>
+            New Document
           </div>
 
           <div class="report-grid"><img src="/images/report-grid-1.png" /></div>
@@ -233,6 +258,34 @@ h6 {
 .report-grids .report-grid img {
   width: 200px;
 }
+
+.welcome-back-modal {
+  padding: 2em;
+}
+
+.welcome-back-modal h1 {
+  text-align: center;
+  color: #7300e3;
+}
+
+.welcome-back-modal .tagline {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.welcome-back-modal .welcome-back-buttons {
+  margin-left: 1.25em;
+  float: left;
+}
+
+.welcome-back-modal .welcome-back-button {
+  float: left;
+  box-shadow: 4px 4px 10px 1px rgba(0,0,0,0.1);
+  padding: 1em;
+  margin: 1em 0.3em;
+  width: 100px;
+  height: 100px;
+}
 </style>
 
 <script>
@@ -255,6 +308,10 @@ export default {
   methods: {
     goToNew() {
       this.$router.push({ path: '/new' });
+    },
+
+    showWelcomeDialog() {
+      this.$modal.show('welcome-back');
     }
   },
 };
