@@ -531,8 +531,8 @@ class Highlight extends Node {
   }
 };
 
-const API_URL = '//245b4c4d.ngrok.io/text';
-const ADHOC_URL = '//245b4c4d.ngrok.io/adhocSummary';
+const API_URL = '//b6bc7602.ngrok.io/text';
+const ADHOC_URL = '//b6bc7602.ngrok.io/adhocSummary';
 
 export default {
   name: 'home',
