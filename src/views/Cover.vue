@@ -8,7 +8,7 @@
       <div class="digest-title-container">
         <h3>Today's Digest</h3>
         <div class="search-box">
-          THE SEARCH BOX
+          <v-icon name="search" style="width: 36px; height: 36px; color: gray" />
         </div>
       </div>
 
@@ -142,6 +142,14 @@ h4 {
 
 .digest-title-container .search-box {
   flex: 0 0 auto;
+}
+
+.search-box {
+  box-shadow: 4px 4px 10px 1px rgba(0,0,0,0.1);
+  width: 400px;
+  text-align: right;
+  padding: 0.75em;
+  margin-bottom: 1.5em;
 }
 
 h6 {
