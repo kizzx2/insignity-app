@@ -670,9 +670,14 @@ export default {
         return;
       }
 
-      const query = document.querySelector('.ProseMirror').innerText;
+      const query = document.querySelector('.ProseMirror').innerText.replace(/\?/g, '').replace('/!/g, '');
+
 
       const rv = await this.query(query);
+      if (rv.suggestions.length === 0) {
+        return;
+      }
+
       this.suggestions = [];
       setTimeout(async () => {
         const suggestions1 = [];
