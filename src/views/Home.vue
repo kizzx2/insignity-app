@@ -655,8 +655,12 @@ export default {
       setTimeout(() => {
         const suggestions1 = [];
         for (const category in rv.suggestions) {
+          let catCount = 0;
           for (const item of rv.suggestions[category]) {
-            console.log("PUSH", item, category);
+            if (++catCount > 2) {
+              break;
+            }
+
             suggestions1.push({ ...item, category });
           }
         }
