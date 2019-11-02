@@ -178,7 +178,7 @@
 
           <div v-if="sentiment" class="progress-container">
             <div class="progress-container-label">
-              <span class="label">Outlook</span>
+              <span class="label">Sentiment</span>
               <span class="value">{{ Math.round(sentiment * 100).toString() + "%" }}</span>
             </div>
             <b-progress :value="sentiment * 100" :max="100" class="red"></b-progress>
