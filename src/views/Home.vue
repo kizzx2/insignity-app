@@ -9,30 +9,7 @@
         <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
         <a href="#">
           <span class="title">Chart</span><br />
-          <span class="subtitle">Embed a chart from data source</span><br />
-        </a>
-      </li>
-
-      <li>
-        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
-        <a href="#"> <span class="title">Table</span><br />
-          <span class="subtitle">Add a dynamic table</span><br />
-        </a>
-      </li>
-
-      <li>
-        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
-        <a href="#">
-          <span class="title">Validate</span><br />
-          <span class="subtitle">Validate your information</span><br />
-        </a>
-      </li>
-
-      <li>
-        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
-        <a href="#">
-          <span class="title">Summarize</span><br />
-          <span class="subtitle">Summarize the selected content</span><br />
+          <span class="subtitle">Summarize numbers</span><br />
         </a>
       </li>
     </vue-context>
