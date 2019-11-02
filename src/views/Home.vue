@@ -561,7 +561,7 @@ export default {
 
   data() {
     return {
-      aiEnabled: true,
+      aiEnabled: false,
       querying: false,
       suggestions: [],
       editor: new Editor({
