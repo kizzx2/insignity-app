@@ -215,22 +215,19 @@
           <h4>Intelligence <b-spinner v-show="querying" variant="primary" type="grow" /></h4>
 
           <transition-group name="slide-fade" tag="div">
-            <template v-for="(items, category, catIdx) in suggestions">
-              <div class="suggestion-category-container" :key="catIdx">
-                <h5 class="suggestion-category">{{ category }}</h5>
-              </div>
-
-              <template v-for="(item, idx) in items">
-                <div class="card" v-if="item.type === 'news'" :key="`${catIdx}-${idx}`" @click="insertSuggestion(item)">
+            <template v-for="(item, idx) in suggestions">
+                <div class="card" v-if="item.type === 'news'" :key="idx" @click="insertSuggestion(item)">
                   <span class="red">•</span>
-                  <span>{{ item.value }}</span>
+                  <span>{{ item.display_value  || item.value }}</span>
+                  <div class="source">{{ item.category  }}</div>
                 </div>
 
-                <div class="card" v-else-if="item.type === 'image'" :key="`${catIdx}-${idx}`" @click="insertSuggestion(item)">
+                <div class="card" v-else-if="item.type === 'image'" :key="idx" @click="insertSuggestion(item)">
                   <img :src="`data:image/png;base64,${item.value}`" />
+                  <div class="source">{{ item.category  }}</div>
                 </div>
 
-                <div class="card" v-else-if="item.type === 'table'" :key="`${catIdx}-${idx}`" @click="insertSuggestion(item)">
+                <div class="card" v-else-if="item.type === 'table'" :key="idx" @click="insertSuggestion(item)">
                   <table>
                     <thead v-if="item.headers">
                       <tr>
@@ -243,12 +240,13 @@
                       </tr>
                     </tbody>
                   </table>
+                  <div class="source">{{ item.category  }}</div>
                 </div>
 
                 <div class="card" v-else-if="item.type === 'chart'" :key="`${catIdx}-${idx}`" @click="insertChart">
                   <vue-apex-charts :options="item.value.options" :series="item.value.series"></vue-apex-charts>
+                  <div class="source">{{ item.category  }}</div>
                 </div>
-              </template>
             </template>
           </transition-group>
         </div>
@@ -369,8 +367,15 @@ h5.suggestion-category {
   margin: 2em 1em;
   margin-left: 0;
   padding: 2em;
+  padding-bottom: 1.5em;
   text-align: left;
   cursor: pointer;
+}
+
+.card .source {
+  color: #7300e3;
+  margin-top: 1em;
+  text-align: right;
 }
 
 .card img {
@@ -496,6 +501,19 @@ import AppSidebar from '@/components/AppSidebar';
 import AppUserBlock from '@/components/AppUserBlock';
 import axios from 'axios';
 
+
+/**
+ * Shuffles array in place. ES6 version
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
 class Highlight extends Node {
   get name() {
     return 'highlight'
@@ -573,10 +591,14 @@ export default {
           new Underline(),
         ],
         autoFocus: true,
-        content: ` `,
+        content: `Northern Ireland's highly restrictive abortion ban lifted at midnight on Monday after legislation was brought in by MPs at Westminster. Same-sex marriage was also legalised under the change to the law. The historic law change marks the beginning of a new cha`,
         onUpdate: _.debounce(this.onUpdateContent, 1000),
       }),
     };
+  },
+
+  mounted() {
+    setTimeout(() => this.onUpdateContent(), 100);
   },
 
   methods: {
@@ -630,7 +652,17 @@ export default {
       const query = document.querySelector('.ProseMirror').innerText;
       const rv = await this.query(query);
       this.suggestions = [];
-      setTimeout(() => this.suggestions = rv.suggestions, 100);
+      setTimeout(() => {
+        const suggestions1 = [];
+        for (const category in rv.suggestions) {
+          for (const item of rv.suggestions[category]) {
+            console.log("PUSH", item, category);
+            suggestions1.push({ ...item, category });
+          }
+        }
+        shuffle(suggestions1);
+        this.suggestions = suggestions1;
+      }, 100);
     },
 
     async query(query) {
@@ -645,9 +677,10 @@ export default {
         const params = new URLSearchParams();
         params.append('text', query);
 
-        // const rv = await axios.post(API_URL, params);
+        let rv = null;
+        // let rv = await axios.post(API_URL, params);
 
-        const rv = { data: {
+        const rvFixture = { data: {
           "entites": [
               [
                   "northern",
@@ -707,6 +740,8 @@ export default {
               "Twitter": null
           }
         } };
+
+        rv = rvFixture;
 
         if (rv.data['message'] !== 'success') {
           throw rv.data['message'];
