@@ -666,11 +666,12 @@ export default {
         shuffle(suggestions1);
         const catCounts = {};
         for (const x of suggestions1) {
-          if (!catCounts[x]) {
-            catCounts[x] = 0;
+          const cat = `${x.category}-${x.type}`;
+          if (!catCounts[cat]) {
+            catCounts[cat] = 0;
           }
 
-          if (++catCounts[x] > 3) {
+          if (++catCounts[cat] > 3) {
             continue;
           }
 
