@@ -232,6 +232,11 @@
 
                 <div class="card" v-else-if="item.type === 'table'" :key="`${catIdx}-${idx}`" @click="insertSuggestion(item)">
                   <table>
+                    <thead v-if="item.headers">
+                      <tr>
+                        <th v-for="th in item.headers">{{ th }}</th>
+                      </tr>
+                    </thead>
                     <tbody>
                       <tr v-for="tr in item.value">
                         <td v-for="td in tr">{{ td }}</td>
@@ -597,9 +602,16 @@ export default {
           break;
 
         case 'table':
-          this.editor.setContent(this.editor.getHTML() + `<table><tbody>` +
-            item.value.map((tr) => `<tr>` + tr.map((td) => `<td>${td}</td>`).join('') + `</tr>`).join("")
-          );
+          let payload = `<table>`;
+          if (item.headers) {
+            payload += "<thead><tr>";
+            payload += item.headers.map((th) => `<th>${th}</th>`).join('');
+            payload += "</tr></thead>";
+          }
+          payload += "<tbody>";
+          payload += item.value.map((tr) => `<tr>` + tr.map((td) => `<td>${td}</td>`).join('') + `</tr>`).join("");
+          payload += "</tbody></table>";
+          this.editor.setContent(this.editor.getHTML() + payload);
           break;
       }
       this.editor.focus();
@@ -633,9 +645,9 @@ export default {
         const params = new URLSearchParams();
         params.append('text', query);
 
-        const rv = await axios.post(API_URL, params);
+        // const rv = await axios.post(API_URL, params);
 
-        /*const rv = {
+        const rv = { data: {
           "entites": [
               [
                   "northern",
@@ -694,7 +706,7 @@ export default {
               "StockData": null,
               "Twitter": null
           }
-        };*/
+        } };
 
         if (rv.data['message'] !== 'success') {
           throw rv.data['message'];
