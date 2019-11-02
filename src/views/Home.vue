@@ -583,7 +583,7 @@ export default {
           new Underline(),
         ],
         autoFocus: true,
-        content: `<entity-name>Donald Trump</entity-name>`,
+        content: ` `,
         onUpdate: _.debounce(this.onUpdateContent, 1000),
       }),
     };
@@ -695,8 +695,6 @@ export default {
               "Twitter": null
           }
         };
-
-        debugger;
 
         if (rv['message'] !== 'success') {
           throw rv['message'];

@@ -18,6 +18,7 @@
 .entity-name {
   background: red;
   color: white;
+  padding-right: 100px;
 }
 
 .entity-date {
