@@ -1,33 +1,6 @@
 <template>
   <div id="home-app">
-    <div class="sidebar">
-      <h1 class="theme-main" style="text-align: center"><img src="/logo.png" style="width: 200px; margin-left: 1em; margin-top: 1em" /></h1>
-
-      <h4>Team</h4>
-
-      <ul>
-        <li class="active">Finance</li>
-        <li>Accounting</li>
-        <li>Insurance</li>
-        <li>Loan</li>
-      </ul>
-
-      <h4>Folders</h4>
-
-      <ul>
-        <li>Annual Reports</li>
-        <li class="active">Financial Statements</li>
-        <li>News Articles</li>
-        <li>Bank Statements</li>
-        <li>Land Registry</li>
-        <li>Company Records</li>
-        <li>Public Databases</li>
-      </ul>
-
-      <div class="settings-container">
-        <v-icon name="settings" style="width: 24px; cursor: pointer"></v-icon>
-      </div>
-    </div>
+    <app-sidebar />
 
     <vue-context ref="menu">
       <h4>Intelligence</h4>
@@ -216,10 +189,7 @@
     </div>
 
     <div class="suggestions">
-      <div class="avatar-container">
-        <h5>Joslin Rodgers</h5>
-        <img class="avatar" src="/cecilia.jpg" />
-      </div>
+      <app-user-block />
 
       <transition name="slide-fade">
         <div v-show="aiEnabled">
@@ -353,51 +323,10 @@
     "sidebar editor-toolbar-container suggestions";
 }
 
-.sidebar {
-  grid-area: sidebar;
-  background: #f6f4f9;
-  padding: 2em;
-  padding-left: 0;
-  display: flex;
-  flex-direction: column;
-}
 
 h4 {
   text-transform: uppercase;
   font-size: 20px;
-}
-
-.sidebar h4 {
-  text-align: left;
-  margin-top: 2em;
-  margin-bottom: 1em;
-  margin-left: 1.3em;
-  text-transform: uppercase;
-}
-
-.sidebar ul {
-  text-align: left;
-  list-style: none;
-  padding-left: 0;
-  margin-left: 0;
-}
-
-.sidebar ul li {
-  padding-left: 2em;
-  height: 2em;
-}
-
-.sidebar ul li:hover {
-  font-weight: bold;
-  cursor: pointer;
-  color: #7300e3;
-}
-
-.sidebar ul li.active {
-  color: #7300e3;
-  font-weight: bold;
-  padding-left: 1.55em;
-  border-left: 6px solid #7300e3;
 }
 
 .suggestions {
@@ -420,22 +349,6 @@ h4 {
 .editor-toolbar-container {
   grid-area: editor-toolbar-container;
   margin-top: -2em;
-}
-
-.avatar-container {
-  margin-bottom: 2em;
-  text-align: right;
-}
-
-.avatar-container h5 {
-  margin-right: 1em;
-  display: inline;
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 48px;
 }
 
 .editor__content {
@@ -580,12 +493,15 @@ import VueApexCharts from 'vue-apexcharts';
 import ApexCharts from 'apexcharts';
 import uuid from 'uuid/v4';
 import { Base64 } from 'js-base64';
+import AppSidebar from '@/components/AppSidebar';
+import AppUserBlock from '@/components/AppUserBlock';
 
 export default {
   name: 'home',
 
   components: {
-    EditorContent, EditorMenuBar, ToggleButton, VueContext, VueApexCharts
+    EditorContent, EditorMenuBar, ToggleButton, VueContext, VueApexCharts,
+    AppSidebar, AppUserBlock
   },
 
   mounted() {
@@ -693,6 +609,7 @@ export default {
                     show: false
                     },
                   },
+
                   xaxis: {
                     categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
                   }
