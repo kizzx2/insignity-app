@@ -521,6 +521,7 @@ class Highlight extends Node {
       defining: true,
       parseDOM: [
         { tag: 'sentiment-positive', attrs: { sent: 'positive' } },
+        { tag: 'sentiment-neutral', attrs: { sent: 'neutral' } },
         { tag: 'sentiment-negative', attrs: { sent: 'negative' } },
       ],
       toDOM: node => {
@@ -628,9 +629,26 @@ export default {
       const sel = document.getSelection();
       const text = sel.anchorNode.textContent;
       let result = "";
+
+      let sentimentTotal = 0;
+      let sentimentCount = 0;
+
       for (const word of text.split(' ')) {
-        result += ` <sentiment-positive> ${word}&nbsp;</sentiment-positive> `;
+        const sentiment = Math.random();
+
+        sentimentTotal += sentiment;
+        sentimentCount += 1;
+
+        if (sentiment < 0.2) {
+          result += ` <sentiment-negative> ${word}&nbsp;</sentiment-negative> `;
+        } else if (sentiment > 0.8) {
+          result += ` <sentiment-positive> ${word}&nbsp;</sentiment-positive> `;
+        } else {
+          result += ` <sentiment-neutral> ${word}&nbsp; </sentiment-neutral>`;
+        }
       }
+
+      this.sentiment = (this.sentiment + sentimentTotal / sentimentCount) / 2;
       this.editor.setContent(this.editor.getHTML() + result);
     },
 
