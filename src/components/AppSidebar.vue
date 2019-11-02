@@ -9,22 +9,13 @@
     <h4>Team</h4>
 
     <ul>
-      <li class="active">Finance</li>
-      <li>Accounting</li>
-      <li>Insurance</li>
-      <li>Loan</li>
+      <li :class="{ active: activeTeamIndex === idx }" v-for="(item, idx) in teamItems" :key="idx" @click="() => activeTeamIndex = idx">{{ item }}</li>
     </ul>
 
     <h4>Folders</h4>
 
     <ul>
-      <li>Annual Reports</li>
-      <li class="active">Financial Statements</li>
-      <li>News Articles</li>
-      <li>Bank Statements</li>
-      <li>Land Registry</li>
-      <li>Company Records</li>
-      <li>Public Databases</li>
+      <li :class="{ active: activeFolderIndex === idx }" v-for="(item, idx) in folderItems" :key="idx" @click="() => activeFolderIndex = idx">{{ item }}</li>
     </ul>
 
     <div class="settings-container">
@@ -94,3 +85,29 @@ h4 {
   background: lightgray;
 }
 </style>
+
+<script>
+import _ from 'lodash';
+import AppSidebar from '@/components/AppSidebar';
+import AppUserBlock from '@/components/AppUserBlock';
+
+export default {
+  data() {
+    return {
+      activeTeamIndex: 0,
+      activeFolderIndex: 1,
+      teamItems: ['Finance', 'Accounting', 'Insurance', 'Loan'],
+      folderItems: [
+        'Annual Reports', 'Financial Statements', 'News Articles',
+        'Bank Statements', 'Land Registry', 'Company Records', 'Public Databases'
+      ],
+    };
+  },
+
+  methods: {
+    goToNew() {
+      this.$router.push({ path: '/new' });
+    }
+  },
+};
+</script>
