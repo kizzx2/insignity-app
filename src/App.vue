@@ -49,4 +49,8 @@
 .editor__content td, .editor__content th {
   border: 1px solid black;
 }
+
+.editor__content img {
+  width: 100%;
+}
 </style>

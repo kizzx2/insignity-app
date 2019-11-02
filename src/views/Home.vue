@@ -591,7 +591,7 @@ export default {
           new Underline(),
         ],
         autoFocus: true,
-        content: `Northern Ireland's highly restrictive abortion ban lifted at midnight on Monday after legislation was brought in by MPs at Westminster. Same-sex marriage was also legalised under the change to the law. The historic law change marks the beginning of a new cha`,
+        content: ` `,
         onUpdate: _.debounce(this.onUpdateContent, 1000),
       }),
     };
