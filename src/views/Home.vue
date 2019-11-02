@@ -3,13 +3,23 @@
     <app-sidebar />
 
     <vue-context ref="menu" style="width: 400px">
-      <h4>Intelligence</h4>
+      <li>
+        <div @contextmenu.prevent.stop="adhocSummary()" style="float: left; clear: left">
+          <v-icon name="trending-up" style="width: 36px; height: 36px; float: left; margin-right: 1em; padding-top: 0.5em"></v-icon>
+          <div style="float: left">
+            <span class="title">Extract numbers</span><br />
+            <span class="subtitle">Extract numbers from text</span><br />
+          </div>
+        </div>
+      </li>
 
       <li>
-        <v-icon name="trending-up" style="width: 36px; height: 36px"></v-icon>
-        <div @contextmenu.prevent.stop="adhocSummary()">
-          <span class="title">Extract numbers</span><br />
-          <span class="subtitle">Extract numbers from text</span><br />
+        <div @contextmenu.prevent.stop="applySentiment()" style="float: left; clear: left">
+          <v-icon name="heart" style="width: 36px; height: 36px; float: left; margin-right: 1em; padding-top: 0.5em"></v-icon>
+          <div style="float: left">
+            <span class="title">Apply sentiments</span><br />
+            <span class="subtitle">Calculate sentiment scores of some text</span><br />
+          </div>
         </div>
       </li>
     </vue-context>
@@ -510,12 +520,11 @@ class Highlight extends Node {
       group: 'block',
       defining: true,
       parseDOM: [
-        { tag: 'entity-name', attrs: { ent: 'name' } },
-        { tag: 'entity-company', attrs: { ent: 'name' } },
-        { tag: 'entity-date', attrs: { ent: 'name' } },
+        { tag: 'sentiment-positive', attrs: { sent: 'positive' } },
+        { tag: 'sentiment-negative', attrs: { sent: 'negative' } },
       ],
       toDOM: node => {
-        return [`span`, { class: `entity-${node.attrs.ent}` }, 0];
+        return [`span`, { class: `sentiment-${node.attrs.ent}` }, 0];
       }
     };
   }
@@ -615,6 +624,16 @@ export default {
       }
     },
 
+    applySentiment() {
+      const sel = document.getSelection();
+      const text = sel.anchorNode.textContent;
+      let result = "";
+      for (const word of text.split(' ')) {
+        result += `<sentiment-positive>${word}</sentiment-positive> `;
+      }
+      this.editor.setContent(this.editor.getHTML() + result);
+    },
+
     insertSuggestion(item) {
       switch (item.type) {
         case 'news':
@@ -651,7 +670,6 @@ export default {
         return;
       }
 
-
       const query = document.querySelector('.ProseMirror').innerText;
 
       const rv = await this.query(query);
@@ -680,15 +698,7 @@ export default {
           this.suggestions.push(x);
         }
 
-        const sentimentResp = await axios({
-          method: 'POST',
-          url: 'https://api.deepai.org/api/sentiment-analysis',
-          headers: {
-            'api-key': '514c3d61-e1c7-45ab-b8ec-00704e0ce19d'
-          },
-          data: 'text=Northern+Irelands+highly+restrictive+abortion'
-        });
-        this.sentiment = Math.random();
+        this.updateSentiment();
       }, 100);
     },
 
