@@ -666,12 +666,14 @@ export default {
         shuffle(suggestions1);
         const catCounts = {};
         for (const x of suggestions1) {
+          console.log("GOT", x);
           const cat = `${x.category}-${x.type}`;
           if (!catCounts[cat]) {
             catCounts[cat] = 0;
           }
 
           if (++catCounts[cat] > 3) {
+            console.log("DROP", x);
             continue;
           }
 
@@ -774,14 +776,7 @@ export default {
 
         // this.$Progress.finish();
         this.querying = false;
-
-        const rv1 = { suggestions: {}, entities: rv.data['entities'] };
-        rv1.suggestions['GoogleNews'] = rv.data['suggestions']['GoogleNews'];
-        // for (const k in rv0.suggestions) {
-          // rv1.suggestions[k] = rv0.suggestions[k];
-        // }
-
-        return rv1;
+        return rv.data;
       } catch (e) {
         // this.$Progress.fail();
         this.querying = false;
