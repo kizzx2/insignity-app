@@ -296,6 +296,10 @@
   color: #7300e3;
 }
 
+.text-primary {
+  color: #7300e3 !important;
+}
+
 .menubar__button {
   margin: 0 0.2em;
   padding: 12px;
@@ -580,7 +584,7 @@ export default {
       if (this.querying)
         return;
 
-      const text = document.querySelector('.ProseMirror')[0].innerText;
+      const text = document.querySelector('.ProseMirror').innerText;
       const words = text.split(' ');
       const query = words.slice(words.length - 100, words.length).join(' ');
 

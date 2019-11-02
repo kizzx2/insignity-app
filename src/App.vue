@@ -15,6 +15,10 @@
   color: #2c3e50;
 }
 
+.progress-bar {
+  background-color: #7300e3 !important;
+}
+
 #nav {
   padding: 30px;
 }
