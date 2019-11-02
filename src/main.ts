@@ -7,8 +7,8 @@ Vue.config.productionTip = false;
 Vue.use(VueProgressBar, {
   color: 'rgb(143, 255, 199)',
   failedColor: 'red',
-  height: '2px'
-})
+  height: '2px',
+});
 
 new Vue({
   router,

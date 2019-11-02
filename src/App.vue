@@ -31,4 +31,8 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.editor__content td, .editor__content th {
+  border: 1px solid black;
+}
 </style>
