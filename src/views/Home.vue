@@ -670,7 +670,7 @@ export default {
         return;
       }
 
-      const query = document.querySelector('.ProseMirror').innerText.replace(/\?/g, '').replace('/!/g, '');
+      const query = document.querySelector('.ProseMirror').innerText.replace(/\?/g, '').replace(/!/g, '').replce(/\./g, '').replace(/,/g, '');
 
 
       const rv = await this.query(query);
