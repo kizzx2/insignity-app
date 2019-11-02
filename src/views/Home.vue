@@ -12,6 +12,13 @@
           <span class="subtitle">Summarize numbers</span><br />
         </a>
       </li>
+
+      <li>
+        <div @contextmenu.prevent.stop="transformUpcase()">
+          <span class="title">Upcase</span><br />
+          <span class="subtitle">Uppercase some text</span><br />
+        </div>
+      </li>
     </vue-context>
 
     <div class="editor-content-container" @contextmenu.prevent="$refs.menu.open">
@@ -219,7 +226,7 @@
                 </div>
 
                 <div class="card" v-else-if="item.type === 'image'" :key="`${catIdx}-${idx}`" @click="insertSuggestion(item)">
-                  <img :src="item.value" />
+                  <img :src="`data:image/png;base64,${item.value}`" />
                 </div>
 
                 <div class="card" v-else-if="item.type === 'table'" :key="`${catIdx}-${idx}`" @click="insertSuggestion(item)">
@@ -567,6 +574,17 @@ export default {
   },
 
   methods: {
+    transformUpcase() {
+      const sel = document.getSelection();
+      const text = sel.anchorNode.textContent;
+
+      const rv = text.slice(0, sel.anchorOffset) +
+        text.slice(sel.anchorOffset, sel.focusOffset).toUpperCase() +
+        text.slice(sel.focusOffset);
+
+      sel.anchorNode.textContent = rv;
+    },
+
     insertSuggestion(item) {
       switch (item.type) {
         case 'news':
@@ -574,7 +592,7 @@ export default {
           break;
 
         case 'image':
-          this.editor.setContent(this.editor.getHTML() + `<p><img src="${item.value}" /></p>`);
+          this.editor.setContent(this.editor.getHTML() + `<p><img src="data:image/png;base64,${item.value}" /></p>`);
           break;
 
         case 'table':
@@ -692,7 +710,6 @@ export default {
           ],
           suggestions: {
             'macroeconomics about China': [
-              { value: 'https://www.mathworks.com/help/examples/matlab/win64/CreateWordCloudFromTableExample_01.png', type: 'image' },
               { value: [['One', 'Two', 'Three'], ['Three', 'Four', 'Five']], type: 'table' },
               { value: {
                 options: {
