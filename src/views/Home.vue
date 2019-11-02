@@ -674,7 +674,7 @@ export default {
 
 
       const rv = await this.query(query);
-      if (rv.suggestions.length === 0) {
+      if (rv && rv.suggestions && rv.suggestions.length === 0) {
         return;
       }
 
