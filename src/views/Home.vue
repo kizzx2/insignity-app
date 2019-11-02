@@ -506,13 +506,13 @@ class Highlight extends Node {
   }
 
   get defaultOptions() {
-    return { ent: 'name' };
+    return { sent: 'name' };
   }
 
   get schema() {
     return {
       attrs: {
-        ent: {
+        sent: {
           default: 'name',
         },
       },
@@ -524,7 +524,7 @@ class Highlight extends Node {
         { tag: 'sentiment-negative', attrs: { sent: 'negative' } },
       ],
       toDOM: node => {
-        return [`span`, { class: `sentiment-${node.attrs.ent}` }, 0];
+        return [`span`, { class: `sentiment-${node.attrs.sent}` }, 0];
       }
     };
   }
@@ -629,7 +629,7 @@ export default {
       const text = sel.anchorNode.textContent;
       let result = "";
       for (const word of text.split(' ')) {
-        result += `<sentiment-positive>${word}</sentiment-positive> `;
+        result += ` <sentiment-positive> ${word}&nbsp;</sentiment-positive> `;
       }
       this.editor.setContent(this.editor.getHTML() + result);
     },
@@ -697,8 +697,6 @@ export default {
 
           this.suggestions.push(x);
         }
-
-        this.updateSentiment();
       }, 100);
     },
 

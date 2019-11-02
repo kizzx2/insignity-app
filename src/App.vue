@@ -15,18 +15,12 @@
   color: #2c3e50;
 }
 
-.entity-name {
-  background: red;
-  color: white;
-  padding-right: 100px;
+.sentiment-positive {
+  color: green;
 }
 
-.entity-date {
-  background: green;
-}
-
-.entity-company {
-  background: blue;
+.sentiment-negative {
+  color: red;
 }
 
 .progress-bar {
