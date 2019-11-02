@@ -626,6 +626,10 @@ export default {
     },
 
     async query(query) {
+      if (query.trim() === '') {
+        return;
+      }
+
       this.querying = true;
       // this.$Progress.start();
 
@@ -633,9 +637,9 @@ export default {
         const params = new URLSearchParams();
         params.append('text', query);
 
-        // const rv = await axios.post(API_URL, params);
+        const rv = await axios.post(API_URL, params);
 
-        const rv = {
+        /*const rv = {
           "entites": [
               [
                   "northern",
@@ -694,10 +698,10 @@ export default {
               "StockData": null,
               "Twitter": null
           }
-        };
+        };*/
 
-        if (rv['message'] !== 'success') {
-          throw rv['message'];
+        if (rv.data['message'] !== 'success') {
+          throw rv.data['message'];
         }
 
         // this.$Progress.finish();
@@ -734,10 +738,13 @@ export default {
           },
         };
 
-        rv0.entities = rv.entities;
-        rv0.suggestions['GoogleNews'] = rv.suggestions['GoogleNews'];
+        const rv1 = { suggestions: {}, entities: rv.data['entities'] };
+        rv1.suggestions['GoogleNews'] = rv.data['suggestions']['GoogleNews'];
+        for (const k in rv0.suggestions) {
+          rv1.suggestions[k] = rv0.suggestions[k];
+        }
 
-        return rv0;
+        return rv1;
       } catch (e) {
         // this.$Progress.fail();
         this.querying = false;
