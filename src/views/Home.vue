@@ -656,7 +656,7 @@ export default {
 
       const rv = await this.query(query);
       this.suggestions = [];
-      setTimeout(() => {
+      setTimeout(async () => {
         const suggestions1 = [];
         for (const category in rv.suggestions) {
           for (const item of rv.suggestions[category]) {
@@ -676,7 +676,15 @@ export default {
 
           this.suggestions.push(x);
         }
-        this.suggestions = suggestions1;
+
+        const sentimentResp = await axios({
+          method: 'POST',
+          url: 'https://api.deepai.org/api/sentiment-analysis',
+          headers: {
+            'api-key': '514c3d61-e1c7-45ab-b8ec-00704e0ce19d'
+          },
+          data: 'text=Northern+Irelands+highly+restrictive+abortion'
+        });
         this.sentiment = Math.random();
       }, 100);
     },
