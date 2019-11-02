@@ -14,6 +14,7 @@
       </li>
 
       <li>
+        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
         <div @contextmenu.prevent.stop="transformUpcase()">
           <span class="title">Upcase</span><br />
           <span class="subtitle">Uppercase some text</span><br />
