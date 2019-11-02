@@ -253,19 +253,14 @@
           <hr />
           <br />
 
-          <h4>Intelligence</h4>
+          <h4>Intelligence <b-spinner v-show="querying" variant="primary" type="grow" /></h4>
 
-          <div class="card" @click="addSomeText()">
-            <span class="red">•</span>Lorem ipsum dolor sit amet
-          </div>
-
-          <div class="card" @click="addSomeText()">
-            <span class="red">•</span>Lorem ipsum dolor sit amet
-          </div>
-
-          <div class="card" @click="addSomeText()">
-            <span class="red">•</span>Lorem ipsum dolor sit amet
-          </div>
+          <transition-group name="slide-fade" tag="div">
+            <div class="card" v-for="item in suggestions" :key="item.id" @click="addSomeText(item)">
+              <span class="red">•</span>
+              <span>{{ item.value }}</span>
+            </div>
+          </transition-group>
         </div>
       </transition>
     </div>
@@ -384,11 +379,14 @@ h4 {
   padding-right: 1em;
   padding: 2em;
   padding-right: 4em;
+  overflow: scroll;
 }
 
 .editor-content-container {
   grid-area: editor-content-container;
   padding: 2em;
+  overflow-y: scroll;
+  margin-bottom: 2em;
 }
 
 .editor-toolbar-container {
@@ -415,6 +413,7 @@ h4 {
 .editor__content {
   min-height: 100%;
   text-align: left;
+  font-size: 24pt;
 }
 
 .card {
@@ -490,6 +489,18 @@ h4 {
   transform: translateX(-10px);
   opacity: 0;
 }
+
+.list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
 </style>
 
 <script>
@@ -515,6 +526,8 @@ import {
 } from 'tiptap-extensions'
 import { ToggleButton } from 'vue-js-toggle-button';
 import { VueContext } from 'vue-context';
+import _ from 'lodash';
+import faker from 'faker';
 
 export default {
   name: 'home',
@@ -526,6 +539,8 @@ export default {
   data() {
     return {
       aiEnabled: true,
+      querying: false,
+      suggestions: [],
       editor: new Editor({
         extensions: [
           new Blockquote(),
@@ -549,15 +564,50 @@ export default {
         autoFocus: true,
         content: `
           <h1>start writing...</h1>
-        `
+        `,
+        onUpdate: _.debounce(this.onUpdateContent, 1000)
       })
     };
   },
 
   methods: {
-    addSomeText() {
-      this.editor.setContent(this.editor.getHTML() + "<h3>FOOO</h3>");
+    addSomeText({ value }) {
+      this.editor.setContent(this.editor.getHTML() + "<div>" + value + "</div>");
       this.editor.focus();
+    },
+
+    async onUpdateContent({ getHTML }) {
+      if (this.querying)
+        return;
+
+      const text = document.querySelector('.ProseMirror')[0].innerText;
+      const words = text.split(' ');
+      const query = words.slice(words.length - 100, words.length).join(' ');
+
+      const xs = await this.query(query);
+      this.suggestions = [];
+      setTimeout(() => this.suggestions = xs, 100);
+    },
+
+    async query(query) {
+      this.querying = true;
+      // this.$Progress.start();
+
+      try {
+        await new Promise((r) => setTimeout(r, Math.random() * 3000));
+        // this.$Progress.finish();
+        this.querying = false;
+
+        return [
+          { id: 1, value: faker.lorem.sentences(3) },
+          { id: 2, value: faker.lorem.sentences(3) },
+          { id: 3, value: faker.lorem.sentences(3) },
+        ];
+      } catch(e) {
+        // this.$Progress.fail();
+        this.querying = false;
+        throw e;
+      }
     }
   },
 
