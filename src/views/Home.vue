@@ -39,16 +39,21 @@
     </vue-context>
 
     <div class="editor-content-container" @contextmenu.prevent="$refs.menu.open">
-      <div style="text-align: right">
-        <toggle-button
-          :labels="{checked: 'AI', unchecked: 'OFF'}"
-          :value="true"
-          :height="44"
-          :width="100"
-          :font-size="24"
-          color="#7300e3"
-          v-model="aiEnabled"
-        />
+      <div style="display: flex">
+        <div style="flex: 1 0 auto; text-align: left">
+          <h2 style="color: gray; font-size: 36px;">start writing...</h2>
+        </div>
+        <div style="flex: 0 0 auto">
+          <toggle-button
+            :labels="{checked: 'AI', unchecked: 'OFF'}"
+            :value="true"
+            :height="44"
+            :width="100"
+            :font-size="24"
+            color="#7300e3"
+            v-model="aiEnabled"
+          />
+        </div>
       </div>
 
       <br />
@@ -539,8 +544,7 @@ export default {
           new Underline(),
         ],
         autoFocus: true,
-        content: `
-          <p>start writing...</p>
+        content: `<p> </p>
         `,
         onUpdate: _.debounce(this.onUpdateContent, 1000),
       }),
