@@ -2,22 +2,14 @@
   <div id="home-app">
     <app-sidebar />
 
-    <vue-context ref="menu">
+    <vue-context ref="menu" style="width: 400px">
       <h4>Intelligence</h4>
 
       <li>
-        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
-        <a href="#">
-          <span class="title">Chart</span><br />
-          <span class="subtitle">Summarize numbers</span><br />
-        </a>
-      </li>
-
-      <li>
-        <img src="/icons/bold.svg" style="width: 36px; height: 36px; display: inline" />
-        <div @contextmenu.prevent.stop="transformUpcase()">
-          <span class="title">Upcase</span><br />
-          <span class="subtitle">Uppercase some text</span><br />
+        <v-icon name="trending-up" style="width: 36px; height: 36px"></v-icon>
+        <div @contextmenu.prevent.stop="adhocSummary()">
+          <span class="title">Extract numbers</span><br />
+          <span class="subtitle">Extract numbers from text</span><br />
         </div>
       </li>
     </vue-context>
@@ -184,28 +176,12 @@
         <div v-show="aiEnabled">
           <h4>Performance</h4>
 
-          <div class="progress-container">
+          <div v-if="sentiment" class="progress-container">
             <div class="progress-container-label">
-              <span class="label">Reading Level</span>
-              <span class="value">58%</span>
+              <span class="label">Outlook</span>
+              <span class="value">{{ Math.round(sentiment * 100).toString() + "%" }}</span>
             </div>
-            <b-progress :value="58" :max="100" class="red"></b-progress>
-          </div>
-
-          <div class="progress-container">
-            <div class="progress-container-label">
-              <span class="label">Industry Standard</span>
-              <span class="value">94%</span>
-            </div>
-            <b-progress :value="94" :max="100" class="blue"></b-progress>
-          </div class="progress-container">
-
-          <div class="progress-container">
-            <div class="progress-container-label">
-              <span class="label">Proprietary Information</span>
-              <span class="value">83%</span>
-            </div>
-            <b-progress :value="83" :max="100" class="yellow"></b-progress>
+            <b-progress :value="sentiment * 100" :max="100" class="red"></b-progress>
           </div>
 
           <br />
@@ -227,7 +203,7 @@
                   <div class="source">{{ item.category  }}</div>
                 </div>
 
-                <div class="card" v-else-if="item.type === 'table'" :key="idx" @click="insertSuggestion(item)">
+                <div class="card" v-else-if="item.type === 'table' && item.value.length > 1" :key="idx" @click="insertSuggestion(item)">
                   <table>
                     <thead v-if="item.headers">
                       <tr>
@@ -243,7 +219,7 @@
                   <div class="source">{{ item.category  }}</div>
                 </div>
 
-                <div class="card" v-else-if="item.type === 'chart'" :key="`${catIdx}-${idx}`" @click="insertChart">
+                <div class="card" v-else-if="item.type === 'chart'" :key="idx" @click="insertChart">
                   <vue-apex-charts :options="item.value.options" :series="item.value.series"></vue-apex-charts>
                   <div class="source">{{ item.category  }}</div>
                 </div>
@@ -546,6 +522,7 @@ class Highlight extends Node {
 };
 
 const API_URL = 'http://245b4c4d.ngrok.io/text';
+const ADHOC_URL = 'http://245b4c4d.ngrok.io/adhocSummary';
 
 export default {
   name: 'home',
@@ -561,9 +538,10 @@ export default {
 
   data() {
     return {
-      aiEnabled: false,
+      aiEnabled: true,
       querying: false,
       suggestions: [],
+      sentiment: null,
       editor: new Editor({
         extensions: [
           new Blockquote(),
@@ -602,15 +580,39 @@ export default {
   },
 
   methods: {
-    transformUpcase() {
-      const sel = document.getSelection();
-      const text = sel.anchorNode.textContent;
+    async adhocSummary() {
+      if (this.querying) {
+        return;
+      }
 
-      const rv = text.slice(0, sel.anchorOffset) +
-        text.slice(sel.anchorOffset, sel.focusOffset).toUpperCase() +
-        text.slice(sel.focusOffset);
+      this.querying = true;
 
-      sel.anchorNode.textContent = rv;
+      try {
+        const sel = document.getSelection();
+        const text = sel.anchorNode.textContent;
+
+        const params = new URLSearchParams();
+        params.append('text', text);
+
+        // let rv = null;
+        let rv = await axios.post(ADHOC_URL, params);
+
+        if (rv.data['suggestions'] && rv.data['suggestions']['TabularData']) {
+          const dat = rv.data['suggestions']['TabularData'];
+          if (dat.length > 1) {
+            let payload = `<table>`;
+            payload += "<tbody>";
+            payload += dat.map((tr) => `<tr>` + tr.map((td) => `<td>${td}</td>`).join('') + `</tr>`).join("");
+            payload += "</tbody></table>";
+            this.editor.setContent(this.editor.getHTML() + payload);
+          }
+        }
+
+        this.querying = false;
+      } catch (e) {
+        this.querying = false;
+        throw e;
+      }
     },
 
     insertSuggestion(item) {
@@ -649,23 +651,33 @@ export default {
         return;
       }
 
+
       const query = document.querySelector('.ProseMirror').innerText;
+
       const rv = await this.query(query);
       this.suggestions = [];
       setTimeout(() => {
         const suggestions1 = [];
         for (const category in rv.suggestions) {
-          let catCount = 0;
           for (const item of rv.suggestions[category]) {
-            if (++catCount > 2) {
-              break;
-            }
-
             suggestions1.push({ ...item, category });
           }
         }
         shuffle(suggestions1);
+        const catCounts = {};
+        for (const x of suggestions1) {
+          if (!catCounts[x]) {
+            catCounts[x] = 0;
+          }
+
+          if (++catCounts[x] > 3) {
+            continue;
+          }
+
+          this.suggestions.push(x);
+        }
         this.suggestions = suggestions1;
+        this.sentiment = Math.random();
       }, 100);
     },
 
@@ -681,8 +693,8 @@ export default {
         const params = new URLSearchParams();
         params.append('text', query);
 
-        let rv = null;
-        // let rv = await axios.post(API_URL, params);
+        // let rv = null;
+        let rv = await axios.post(API_URL, params);
 
         const rvFixture = { data: {
           "entites": [
@@ -745,7 +757,7 @@ export default {
           }
         } };
 
-        rv = rvFixture;
+        // rv = rvFixture;
 
         if (rv.data['message'] !== 'success') {
           throw rv.data['message'];
@@ -754,41 +766,11 @@ export default {
         // this.$Progress.finish();
         this.querying = false;
 
-        const rv0 = {
-          entities: [
-            ['HSBC', 'company'],
-            ['Mark Zuckberg', 'company'],
-            ['HSBC', 'company'],
-          ],
-          suggestions: {
-            'macroeconomics about China': [
-              { value: [['One', 'Two', 'Three'], ['Three', 'Four', 'Five']], type: 'table' },
-              { value: {
-                options: {
-                  chart: {
-                    toolbar: {
-                    show: false
-                    },
-                  },
-
-                  xaxis: {
-                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-                  }
-                },
-                series: [{
-                  name: 'series-1',
-                  data: [30, 40, 45, 50, 49, 60, 70, 91]
-                }]
-              }, type: 'chart' }
-            ],
-          },
-        };
-
         const rv1 = { suggestions: {}, entities: rv.data['entities'] };
         rv1.suggestions['GoogleNews'] = rv.data['suggestions']['GoogleNews'];
-        for (const k in rv0.suggestions) {
-          rv1.suggestions[k] = rv0.suggestions[k];
-        }
+        // for (const k in rv0.suggestions) {
+          // rv1.suggestions[k] = rv0.suggestions[k];
+        // }
 
         return rv1;
       } catch (e) {
