@@ -209,7 +209,8 @@
                 </div>
 
                 <div class="card" v-else-if="item.type === 'image'" :key="idx" @click="insertSuggestion(item)">
-                  <img :src="`data:image/png;base64,${item.value}`" />
+                  <img v-if="item.value.startsWith('https')" :src="item.value" />
+                  <img v-else :src="`data:image/png;base64,${item.value}`" />
                   <div class="source">{{ item.category  }}</div>
                 </div>
 
@@ -607,6 +608,14 @@ export default {
         // let rv = null;
         let rv = await axios.post(ADHOC_URL, params);
 
+        // let rv = { data: { suggestions: { TabularData: [
+          // ['revenue', '$61b - $64b'],
+          // // ['gross margin', '37.5% - 38.5%'],
+          // ['operating expenses', '$8.7b - $8.8b'],
+          // ['other income', '$200m'],
+          // ['tax rate', '16.5'],
+        // ] } } };
+
         if (rv.data['suggestions'] && rv.data['suggestions']['TabularData']) {
           const dat = rv.data['suggestions']['TabularData'];
           if (dat.length > 1) {
@@ -659,7 +668,11 @@ export default {
           break;
 
         case 'image':
-          this.editor.setContent(this.editor.getHTML() + `<p><img src="data:image/png;base64,${item.value}" /></p>`);
+          if (item.value.startsWith('https')) {
+            this.editor.setContent(this.editor.getHTML() + `<p><img src="${item.value}" /></p>`);
+          } else {
+            this.editor.setContent(this.editor.getHTML() + `<p><img src="data:image/png;base64,${item.value}" /></p>`);
+          }
           break;
 
         case 'table':
@@ -738,7 +751,26 @@ export default {
         // let rv = null;
         let rv = await axios.post(API_URL, params);
 
-        const rvFixture = { data: {
+        /*let rv = { data: { message: 'success', suggestions: {
+          'Court Cases': [
+            { type: 'table', value: [
+              ['date', 'Jan 20, 2017'],
+              ['type', 'lawsuit'],
+              ['plantiff', 'Apple In.c'],
+              ['defendent', 'Qualcomm Incorporated and affiliated parties (“Qualcomm”)'],
+              ['reason', 'to enjoin Qualcomm from requiring the Company to pay royalties at the rate demanded by Qualcomm'],
+            ]},
+            { type: 'table', value: [
+              ['date', 'Aug 24, 2012'],
+              ['type', 'lawsuit'],
+              ['plantiff', 'Apple Inc.'],
+              ['defendent', 'Samsung Electronics and affiliated parties'],
+              ['outcome', 'a jury returned a verdict awarding the Company $1.05 billion'],
+            ]}
+          ]
+        } } };*/
+
+        /*let rv = { data: {
           "entites": [
               [
                   "northern",
@@ -797,9 +829,7 @@ export default {
               "StockData": null,
               "Twitter": null
           }
-        } };
-
-        // rv = rvFixture;
+        } };*/
 
         if (rv.data['message'] !== 'success') {
           throw rv.data['message'];

@@ -23,6 +23,10 @@
   color: red;
 }
 
+*:focus {
+  outline: none
+}
+
 .progress-bar {
   background-color: #7300e3 !important;
 }
